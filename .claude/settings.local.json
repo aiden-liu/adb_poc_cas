@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git commit:*)",
+      "WebSearch",
+      "mcp__github__search_repositories",
+      "Bash(git add -A)",
+      "Bash(gh repo create claude_code_project_template --public --source=. --remote=origin --push)"
+    ],
+    "deny": [],
+    "ask": []
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "github"
+  ]
+}
