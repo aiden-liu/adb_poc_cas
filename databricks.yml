@@ -1,0 +1,29 @@
+# This is a Databricks asset bundle definition for workspace.
+# The Databricks extension requires databricks.yml configuration file.
+# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
+
+bundle:
+  name: workspace
+
+include:
+  - resources/*.yml
+  - resources/*/*.yml
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: https://adb-3140274369437577.17.azuredatabricks.net
+
+  ## Optionally, there could be 'staging' or 'prod' targets here.
+  #
+  # prod:
+  #   mode: production
+  #   workspace:
+  #     host: https://adb-3140274369437577.17.azuredatabricks.net
+  #     # We explicitly deploy to /Workspace/Users/liua@atzn.net.nz to make sure we only have a single copy.
+  #     root_path: /Workspace/Users/liua@atzn.net.nz/.bundle/${bundle.name}/${bundle.target}
+  #   permissions:
+  #     - user_name: liua@atzn.net.nz
+  #       level: CAN_MANAGE

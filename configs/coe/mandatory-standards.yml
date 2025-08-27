@@ -1,0 +1,76 @@
+version: "1.0"
+category: "mandatory"
+description: "Non-negotiable data engineering standards"
+
+naming_conventions:
+  tables:
+    - rule: "use_singular_nouns"
+      pattern: "^[a-z][a-z0-9_]*[a-z0-9]$"
+      examples:
+        good: ["customer", "order_item", "product_category"]
+        bad: ["customers", "orderItems", "product-categories"]
+      message: "Table names must use singular nouns with snake_case"
+    - rule: "no_abbreviations"
+      forbidden: ["cust", "prod", "ord", "addr", "qty", "desc", "info", "mgmt"]
+      message: "Use full words: customer, product, order, address, quantity, description, information, management"
+    - rule: "no_reserved_words"
+      forbidden: ["user", "order", "group", "table", "index", "key", "value"]
+      message: "Avoid SQL reserved words as table names"
+
+  columns:
+    - rule: "snake_case_required"
+      pattern: "^[a-z][a-z0-9_]*[a-z0-9]$"
+      examples:
+        good: ["customer_id", "created_at", "order_total"]
+        bad: ["customerId", "CreatedAt", "order-total"]
+    - rule: "id_suffix_for_keys"
+      pattern: ".*_id$"
+      applies_to: "primary_and_foreign_keys"
+      examples:
+        good: ["customer_id", "product_id"]
+        bad: ["customer_key", "product_ref"]
+
+metadata_columns:
+  datetime_fields:
+    - rule: "utc_timezone_required"
+      applies_to: ["created_at", "updated_at", "processed_at", "deleted_at", "_timestamp"]
+      format: "TIMESTAMP"
+      timezone: "UTC"
+      message: "All datetime metadata must use UTC timezone"
+    - rule: "standard_audit_columns"
+      required: ["created_at", "updated_at"]
+      optional: ["deleted_at", "created_by", "updated_by"]
+      data_type: "TIMESTAMP"
+
+data_types:
+  primary_keys:
+    - rule: "use_string_ids"
+      preferred_type: "STRING"
+      avoid: ["INT", "BIGINT", "SMALLINT"]
+      message: "Use string-based IDs for better scalability and UUID support"
+    - rule: "uuid_format_preferred"
+      pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+      message: "Use UUID format for primary keys when possible"
+
+  monetary_values:
+    - rule: "use_decimal_for_money"
+      required_type: "DECIMAL(19,4)"
+      avoid: ["FLOAT", "DOUBLE"]
+      message: "Use DECIMAL for monetary values to avoid floating point precision issues"
+
+documentation:
+  required_fields:
+    - rule: "table_description_mandatory"
+      message: "Every table must have a description explaining its purpose"
+    - rule: "column_description_for_business_fields"
+      applies_to: ["business_logic_columns", "calculated_fields", "derived_metrics"]
+      message: "Business logic columns must have clear descriptions"
+
+security:
+  sensitive_data:
+    - rule: "no_pii_in_column_names"
+      forbidden_patterns: ["ssn", "social_security", "credit_card", "password", "secret"]
+      message: "Avoid exposing PII in column names"
+    - rule: "encryption_for_sensitive_fields"
+      applies_to: ["email", "phone", "address"]
+      message: "Consider encryption or hashing for sensitive personal data"

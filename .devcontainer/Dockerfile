@@ -3,7 +3,7 @@ FROM node:20
 ARG TZ
 ENV TZ="$TZ"
 
-ARG CLAUDE_CODE_VERSION=1.0.84
+ARG CLAUDE_CODE_VERSION=latest
 
 # Install basic development tools and iptables/ipset
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -25,6 +25,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   jq \
   nano \
   vim \
+  python3-pip \
+  python3-venv \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Ensure default node user has access to /usr/local/share
@@ -85,9 +87,11 @@ RUN npm install -g @musistudio/claude-code-router@$latest
 # Copy and set up firewall script
 COPY init-firewall.sh /usr/local/bin/
 COPY setup-claude-router-config.sh /usr/local/bin/
+COPY databricks-cli-install.sh /usr/local/bin/
 USER root
-RUN chmod +x /usr/local/bin/init-firewall.sh /usr/local/bin/setup-claude-router-config.sh && \
+RUN chmod +x /usr/local/bin/init-firewall.sh /usr/local/bin/setup-claude-router-config.sh /usr/local/bin/databricks-cli-install.sh && \
   echo "node ALL=(root) NOPASSWD: SETENV: /usr/local/bin/init-firewall.sh" > /etc/sudoers.d/node-firewall && \
   echo "node ALL=(root) NOPASSWD: /usr/local/bin/setup-claude-router-config.sh" >> /etc/sudoers.d/node-firewall && \
+  echo "node ALL=(root) NOPASSWD: /usr/local/bin/databricks-cli-install.sh" >> /etc/sudoers.d/node-firewall && \
   chmod 0440 /etc/sudoers.d/node-firewall
 USER node

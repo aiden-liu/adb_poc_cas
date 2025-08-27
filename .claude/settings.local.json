@@ -5,7 +5,12 @@
       "WebSearch",
       "mcp__github__search_repositories",
       "Bash(git add -A)",
-      "Bash(gh repo create claude_code_project_template --public --source=. --remote=origin --push)"
+      "Bash(gh repo create claude_code_project_template --public --source=. --remote=origin --push)",
+      "Bash(source:*)",
+      "Bash(uv pip install:*)",
+      "Bash(dbt:*)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "Bash(mkdir:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,0 +1,120 @@
+version: "1.0"
+category: "advisory"
+description: "Recommended best practices for data engineering"
+
+dbt_patterns:
+  model_organization:
+    - rule: "layer_separation"
+      layers: ["bronze", "silver", "gold"]
+      prefixes: ["raw_", "clean_", "agg_"]
+      description: "Organize models by data maturity: bronze (raw), silver (cleaned), gold (aggregated)"
+    - rule: "subdirectory_by_domain"
+      suggested_structure: ["sales", "marketing", "finance", "operations"]
+      message: "Group related models in domain-specific subdirectories"
+    - rule: "staging_models_prefix"
+      prefix: "stg_"
+      location: "models/staging/"
+      message: "Use stg_ prefix for staging models that clean and standardize raw data"
+
+  documentation_coverage:
+    - rule: "minimum_coverage"
+      minimum_percentage: 80
+      required_fields: ["description", "columns"]
+      message: "Aim for 80%+ documentation coverage on models and columns"
+    - rule: "business_logic_documentation"
+      applies_to: ["complex_calculations", "business_rules", "data_transformations"]
+      message: "Document complex business logic and transformation rules clearly"
+
+  testing_strategy:
+    - rule: "primary_key_tests"
+      required: ["unique", "not_null"]
+      message: "Every model should test primary key uniqueness and completeness"
+    - rule: "referential_integrity"
+      foreign_keys: "must_have_relationships_test"
+      message: "Test foreign key relationships between models"
+    - rule: "data_quality_thresholds"
+      suggested_tests: ["accepted_values", "not_null", "unique"]
+      coverage_target: "critical_business_fields"
+
+performance:
+  delta_optimization:
+    - rule: "partition_large_tables"
+      threshold_gb: 10
+      recommended_columns: ["date", "region", "category", "year_month"]
+      message: "Partition tables larger than 10GB by commonly filtered columns"
+    - rule: "z_order_clustering"
+      applies_to: "frequently_filtered_columns"
+      max_columns: 4
+      message: "Use Z-ORDER on up to 4 frequently filtered columns for better query performance"
+    - rule: "optimize_frequency"
+      schedule: "daily_for_active_tables"
+      command: "OPTIMIZE table_name ZORDER BY (column_list)"
+      message: "Run OPTIMIZE daily on actively updated tables"
+
+  query_optimization:
+    - rule: "avoid_select_star"
+      message: "Select only needed columns to reduce data transfer and improve performance"
+    - rule: "predicate_pushdown"
+      message: "Apply filters as early as possible in the transformation pipeline"
+    - rule: "incremental_processing"
+      applies_to: "large_datasets"
+      strategy: "use_merge_or_append"
+      message: "Use incremental models for large, frequently updated datasets"
+
+data_quality:
+  monitoring:
+    - rule: "freshness_checks"
+      applies_to: "critical_source_tables"
+      max_age: "24_hours"
+      message: "Monitor data freshness for critical business tables"
+    - rule: "volume_anomaly_detection"
+      threshold: "20_percent_variance"
+      message: "Alert on significant volume changes in key datasets"
+    - rule: "schema_evolution_tracking"
+      message: "Track and validate schema changes in source systems"
+
+  validation_rules:
+    - rule: "business_rule_validation"
+      examples: ["order_total >= 0", "customer_age BETWEEN 0 AND 150"]
+      message: "Implement business rule validation as dbt tests"
+    - rule: "cross_table_consistency"
+      message: "Validate data consistency across related tables"
+
+security_practices:
+  access_control:
+    - rule: "principle_of_least_privilege"
+      message: "Grant minimum necessary permissions for each role"
+    - rule: "row_level_security"
+      applies_to: "sensitive_datasets"
+      message: "Implement row-level security for multi-tenant or sensitive data"
+
+  data_classification:
+    - rule: "tag_sensitive_columns"
+      categories: ["PII", "PHI", "Financial", "Confidential"]
+      message: "Tag columns with appropriate data classification labels"
+    - rule: "masking_in_non_prod"
+      environments: ["dev", "test", "staging"]
+      message: "Mask or anonymize sensitive data in non-production environments"
+
+collaboration:
+  code_review:
+    - rule: "peer_review_required"
+      minimum_reviewers: 1
+      message: "All model changes should be peer reviewed before deployment"
+    - rule: "impact_analysis"
+      message: "Document downstream impact when modifying shared models"
+
+  version_control:
+    - rule: "feature_branch_workflow"
+      message: "Use feature branches for model development and testing"
+    - rule: "semantic_commit_messages"
+      format: "type(scope): description"
+      examples: ["feat(sales): add customer lifetime value model", "fix(staging): correct date parsing logic"]
+
+monitoring:
+  observability:
+    - rule: "model_execution_tracking"
+      metrics: ["runtime", "row_count", "success_rate"]
+      message: "Track model execution metrics for performance monitoring"
+    - rule: "lineage_documentation"
+      message: "Maintain clear data lineage documentation for impact analysis"

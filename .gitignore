@@ -34,3 +34,30 @@ logs/
 # Temporary files
 tmp/
 temp/
+.databricks
+
+# Python
+.venv/
+
+# DABs
+.databricks/
+build/
+dist/
+__pycache__/
+*.egg-info
+.venv/
+scratch/**
+!scratch/README.md
+
+# dbt
+target/
+dbt_packages/
+dbt_modules/
+logs/
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
+*.tfplan

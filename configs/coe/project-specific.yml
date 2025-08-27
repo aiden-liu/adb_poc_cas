@@ -1,0 +1,208 @@
+version: "1.0"
+category: "project"
+description: "CAS (Crash Analysis System) project specific rules and configurations"
+
+project_context:
+  name: "CAS (Crash Analysis System)"
+  description: "New Zealand traffic crash data analysis system"
+  data_source: "NZ Police crash reports via NZTA"
+  domains: ["crashes", "vehicles", "casualties", "locations", "weather", "road_conditions"]
+  target_platform: "databricks"
+  dbt_version: "1.0+"
+  data_update_frequency: "monthly"
+  data_coverage: "2000-present"
+
+business_rules:
+  crash_severity_classification:
+    - rule: "crash_severity_values"
+      allowed: ["F", "S", "M", "N"]
+      mapping:
+        "F": "Fatal"
+        "S": "Serious"
+        "M": "Minor" 
+        "N": "Non-injury"
+      message: "Crash severity must use standard NZTA classification codes"
+
+  geographic_constraints:
+    - rule: "coordinate_system"
+      required: "NZMG_WGS84"
+      precision: "1m"
+      null_coordinates: "0,0"
+      message: "Use New Zealand Map Grid coordinates with WGS84 datum"
+    - rule: "regional_boundaries"
+      source: "territorial_local_authority_boundaries"
+      message: "Regional assignments must align with TLA boundaries"
+
+  temporal_validation:
+    - rule: "crash_year_range"
+      minimum_year: 2000
+      maximum_year: "current_year"
+      message: "Crash years must be within valid data collection period"
+    - rule: "financial_year_format"
+      pattern: "^\\d{4}/\\d{4}$"
+      example: "2023/2024"
+      message: "Financial year must follow YYYY/YYYY format"
+
+  vehicle_classification:
+    - rule: "vehicle_type_categories"
+      standard_types: ["carStationWagon", "truck", "motorcycle", "bicycle", "bus", "taxi", "suv", "vanOrUtility"]
+      derived_counts: "must_be_non_negative_integers"
+      message: "Vehicle counts must be non-negative integers for each category"
+
+data_quality_rules:
+  coordinate_validation:
+    - rule: "valid_nz_coordinates"
+      easting_range: [1000000, 3000000]
+      northing_range: [4000000, 7000000]
+      special_case: "0,0 for unknown locations"
+      message: "Coordinates must be within New Zealand bounds or marked as unknown"
+
+  casualty_consistency:
+    - rule: "casualty_count_validation"
+      validation: "fatalCount + seriousInjuryCount + minorInjuryCount >= 0"
+      business_rule: "casualty counts must align with crash severity"
+      message: "Casualty counts must be consistent with crash severity classification"
+
+  speed_limit_validation:
+    - rule: "speed_limit_values"
+      standard_limits: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110]
+      special_values: ["LSZ"]  # Limited Speed Zone
+      message: "Speed limits must be standard NZ values or LSZ"
+
+databricks_config:
+  storage_configuration:
+    - rule: "bronze_layer_location"
+      path: "/mnt/cas/bronze/crashes/{table_name}"
+      format: "delta"
+      partitioning: "by_crash_year"
+      message: "Bronze layer partitioned by crash year for efficient querying"
+    - rule: "silver_layer_location"
+      path: "/mnt/cas/silver/crashes/{table_name}"
+      format: "delta"
+      optimization: "z_order_by_region_and_date"
+    - rule: "gold_layer_location"
+      path: "/mnt/cas/gold/analytics/{table_name}"
+      format: "delta"
+      partitioning: "by_financial_year"
+
+  streaming_configuration:
+    - rule: "monthly_data_ingestion"
+      trigger: "monthly_first_week"
+      checkpoint_location: "/mnt/checkpoints/cas/{table_name}"
+      message: "Data updates monthly in first week of each month"
+
+model_conventions:
+  naming_patterns:
+    - rule: "bronze_crash_data"
+      prefix: "bronze_cas_"
+      examples: ["bronze_cas_crashes_raw", "bronze_cas_vehicles_raw"]
+      location: "models/bronze/"
+    - rule: "silver_cleaned_data"
+      prefix: "silver_cas_"
+      examples: ["silver_cas_crashes_clean", "silver_cas_casualties_clean"]
+      location: "models/silver/"
+    - rule: "gold_analytics_models"
+      prefix: "gold_cas_"
+      examples: ["gold_cas_crash_trends", "gold_cas_safety_metrics"]
+      location: "models/gold/"
+
+  domain_organization:
+    - rule: "subject_area_grouping"
+      domains:
+        crashes: ["crash_events", "crash_locations", "crash_circumstances"]
+        vehicles: ["vehicle_involvement", "vehicle_types", "vehicle_damage"]
+        casualties: ["injury_counts", "casualty_types", "severity_analysis"]
+        infrastructure: ["road_conditions", "traffic_control", "weather"]
+        geography: ["regions", "territorial_authorities", "meshblocks"]
+
+column_standards:
+  cas_specific_columns:
+    - rule: "crash_identifier_format"
+      primary_key: "crash_id"
+      format: "string_based_unique_identifier"
+      message: "Use string-based crash identifiers for scalability"
+    - rule: "coordinate_precision"
+      easting_column: "easting"
+      northing_column: "northing"
+      data_type: "DECIMAL(10,0)"
+      message: "Store coordinates as decimal with 1m precision"
+    - rule: "count_columns_format"
+      pattern: "*Count"
+      data_type: "INTEGER"
+      constraint: "CHECK (value >= 0)"
+      examples: ["fatalCount", "seriousInjuryCount", "minorInjuryCount"]
+
+testing_requirements:
+  mandatory_tests:
+    - rule: "crash_data_integrity"
+      tests: ["unique crash_id", "not_null crash_id", "not_null crashYear"]
+      message: "Every crash record must have unique, non-null identifier and year"
+    - rule: "geographic_validity"
+      tests: ["coordinate_bounds_check", "region_tla_consistency"]
+      message: "Geographic data must pass boundary and consistency checks"
+    - rule: "casualty_logic_validation"
+      tests: ["casualty_count_non_negative", "severity_casualty_alignment"]
+      message: "Casualty data must follow business logic rules"
+
+  custom_test_macros:
+    - rule: "cas_specific_validations"
+      available: 
+        - "test_nz_coordinate_bounds"
+        - "test_crash_severity_consistency" 
+        - "test_vehicle_count_logic"
+        - "test_temporal_validity"
+      location: "macros/tests/"
+      message: "Use CAS-specific test macros for domain validation"
+
+documentation_standards:
+  required_documentation:
+    - rule: "nzta_data_context"
+      required_sections: 
+        - "data_source_description"
+        - "nzta_field_definitions"
+        - "update_schedule"
+        - "data_quality_notes"
+      message: "Document NZTA data source context and field definitions"
+    - rule: "crash_analysis_methodology"
+      required_for: ["analytical_models", "derived_metrics", "trend_calculations"]
+      message: "Document methodology for crash analysis calculations"
+
+  field_mapping_documentation:
+    - rule: "nzta_field_reference"
+      source: "README.md field descriptions table"
+      requirement: "map_all_source_fields_to_model_columns"
+      message: "Maintain mapping between NZTA source fields and model columns"
+
+deployment_configuration:
+  environment_specific:
+    - rule: "dev_environment"
+      target: "dev"
+      data_subset: "last_2_years_sample"
+      schema_suffix: "_dev"
+      message: "Dev environment uses recent data subset for performance"
+    - rule: "prod_environment"
+      target: "prod"
+      data_coverage: "full_historical_dataset"
+      retention_policy: "maintain_all_years_2000_onwards"
+      message: "Production maintains complete historical crash dataset"
+
+regulatory_compliance:
+  data_privacy:
+    - rule: "no_personal_identifiers"
+      prohibited: ["names", "addresses", "license_plates", "personal_details"]
+      message: "CAS data excludes personal identifiers per privacy requirements"
+    - rule: "aggregation_minimums"
+      minimum_group_size: 5
+      applies_to: "small_geographic_areas"
+      message: "Apply aggregation rules for small area analysis to protect privacy"
+
+performance_optimization:
+  query_patterns:
+    - rule: "temporal_partitioning"
+      partition_column: "crashYear"
+      reason: "most_queries_filter_by_year"
+      message: "Partition by crash year for optimal query performance"
+    - rule: "regional_clustering"
+      z_order_columns: ["region", "tlaName", "crashYear"]
+      reason: "common_geographic_analysis_patterns"
+      message: "Cluster by region and TLA for geographic analysis queries"
