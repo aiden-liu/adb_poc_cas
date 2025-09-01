@@ -113,7 +113,7 @@ Each chart is specific to a variable, and shows all data (without any filters ap
 
 1. December 17th 2019: Changes have been made to the data recorded in this field
 
-## Development setup
+## Databricks Development Setup
 
 1. Install the Databricks CLI from https://docs.databricks.com/dev-tools/cli/databricks-cli.html
 
@@ -239,9 +239,9 @@ Optionally, install developer tools such as the Databricks extension for Visual 
 https://docs.databricks.com/dev-tools/vscode-ext.html. Third-party extensions
 related to dbt may further enhance your dbt development experience!
 
-# Dev Container Setup
+# DevContainer & CLAUDE CODE Setup
 
-Onboarding
+## Onboarding
 
 - Set local env vars before opening the IDE (VS Code):
   - CLAUDE_ROUTER_GPT_API_BASE_URL
@@ -254,7 +254,7 @@ Onboarding
   ```
 - Rebuild/reopen the Dev Container. The setup will generate ~/.claude-code-router/config.json and whitelist the domain derived from CLAUDE_ROUTER_GPT_API_BASE_URL.
 
-Notes
+## Notes
 
 - CLAUDE_ROUTER_API_KEY is sensitive; set it only in your local environment, not in source control.
 - For Claude Code, see repo [claude-code](https://github.com/anthropics/claude-code)
@@ -263,14 +263,14 @@ Notes
   - [Context7](https://github.com/upstash/context7)
   - [ccundo](https://github.com/RonitSachdev/ccundo)
 
-Limitations
+## Limitations
 
 - This Dev Container config with Claude Code Router is for Azure AI Foundry and Azure Databricks SONNET model compatibility only.
 - This setup does not support Claude extended thinking.
 - This setup does not support analysing images.
 - This setup does not support web search.
 
-# MCP config
+## MCP config
 
 From terminal, by running commandline, we can add local mcp server or remote mcp server.
 
@@ -286,7 +286,7 @@ Note:
 
 - [Github Official MCP](https://github.com/github/github-mcp-server)
 
-# Permissions
+## Permissions
 
 From Claude Code (`ccr code`), use `/permissions` to define "Allow"/"Ask"/"Deny"/"Workspace" rules, and choose scope "Project Settings (local)"/"Project Settings"/"User settings".
 
@@ -300,7 +300,7 @@ For managing permission on mcps, simply put `mcp__<mcp_name>` as rule.
 
 Another way, start claud code with `--dangerously-skip-permissions`, like `ccr code --dangerously-skip-permissions`, means claude code don't need to ask for any permission, all permisssions are allowed.
 
-# Custom Commands with '/'
+## Custom Commands with '/'
 
 [Official guidance](https://docs.anthropic.com/en/docs/claude-code/slash-commands#custom-slash-commands)
 
@@ -316,10 +316,10 @@ echo "对比这个分支: $ARGUMENTS，与$ARGUMENTS分支的差异，并且提�
 
 After restart Claude Code, you can simply `/code_review feat/br-123-add-page main` where 'feat/br-123-add-page' is the value for the first $ARGUMENTS and 'main' is the value for the second.
 
-# Hook
+## Hook
 
 See [official guide](https://docs.anthropic.com/en/docs/claude-code/hooks)
 
-# Sub Agent
+## Sub Agent
 
 See [official guide](https://docs.anthropic.com/en/docs/claude-code/sub-agents)
