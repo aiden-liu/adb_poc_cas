@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is a **New Zealand Crash Analysis System (CAS)** data engineering project that processes traffic crash data from NZTA. The project demonstrates modern data engineering practices using dbt, Databricks, and Terraform in a containerized development environment with Claude Code integration.
 
 The project includes:
+
 - **CAS Data Pipeline**: dbt models for processing NZ traffic crash data from NZTA
 - **Infrastructure as Code**: Terraform for provisioning Azure Data Lake and Databricks resources
 - **Dev Container**: Node.js 20 base with Databricks CLI, Python, and data engineering tools
@@ -16,18 +17,22 @@ The project includes:
 ## Environment Setup
 
 ### Required Environment Variables
+
 Set these environment variables before opening VS Code:
+
 - `CLAUDE_ROUTER_GPT_API_BASE_URL` - Azure OpenAI GPT-5 endpoint
-- `CLAUDE_ROUTER_GPT_API_KEY` - Azure OpenAI API key  
-- `CLAUDE_ROUTER_ADB_SONNECT_API_BASE_URL` - Azure Databricks Sonnet endpoint
-- `CLAUDE_ROUTER_ADB_SONNECT_API_KEY` - Azure Databricks API key
+- `CLAUDE_ROUTER_GPT_API_KEY` - Azure OpenAI API key
+- `CLAUDE_ROUTER_ADB_SONNET_API_BASE_URL` - Azure Databricks Sonnet endpoint
+- `CLAUDE_ROUTER_ADB_SONNET_API_KEY` - Azure Databricks API key
 
 Example setup command:
+
 ```bash
-export CLAUDE_ROUTER_GPT_API_BASE_URL=https://xxxxxx.openai.azure.com/openai/deployments/gpt-5/chat/completions?api-version=2024-12-01-preview && export CLAUDE_ROUTER_GPT_API_KEY=xxxxx && export CLAUDE_ROUTER_ADB_SONNECT_API_BASE_URL=https://xxxxxx.azuredatabricks.net/serving-endpoints/databricks-claude-sonnet-4/invocations && export CLAUDE_ROUTER_ADB_SONNECT_API_KEY=xxxxx && code <current_project_folder>
+export CLAUDE_ROUTER_GPT_API_BASE_URL=https://xxxxxx.openai.azure.com/openai/deployments/gpt-5/chat/completions?api-version=2024-12-01-preview && export CLAUDE_ROUTER_GPT_API_KEY=xxxxx && export CLAUDE_ROUTER_ADB_SONNET_API_BASE_URL=https://xxxxxx.azuredatabricks.net/serving-endpoints/databricks-claude-sonnet-4/invocations && export CLAUDE_ROUTER_ADB_SONNET_API_KEY=xxxxx && code <current_project_folder>
 ```
 
 ### Dev Container Setup
+
 - Rebuild/reopen the dev container after setting environment variables
 - The setup automatically generates `~/.claude-code-router/config.json`
 - Domains are automatically whitelisted based on the API base URLs
@@ -35,14 +40,16 @@ export CLAUDE_ROUTER_GPT_API_BASE_URL=https://xxxxxx.openai.azure.com/openai/dep
 ## Claude Code Router Configuration
 
 The router is configured with two providers:
+
 - **azure-gpt5**: Routes to Azure OpenAI GPT-5 (default)
-- **azure-sonnect**: Routes to Azure Databricks Claude Sonnet 4
+- **azure-SONNET**: Routes to Azure Databricks Claude Sonnet 4
 
 Configuration is automatically generated from environment variables during container startup.
 
 ## Permission Management
 
 Current permissions (`.claude/settings.local.json`):
+
 - **Allow**: `Bash(git commit:*)`, `WebSearch`
 - Use `/permissions` command to modify rules
 - Scope options: "Project Settings (local)", "Project Settings", "User settings"
@@ -53,12 +60,15 @@ Alternative: Start with `--dangerously-skip-permissions` to allow all operations
 ## Databricks Integration
 
 ### Workspace Configuration
+
 The project includes Databricks workspace configuration via `databricks.yml`:
+
 - **Bundle Name**: workspace
 - **Default Target**: dev (development mode)
 - **Workspace Host**: Pre-configured Azure Databricks endpoint
 
 ### Databricks CLI
+
 - Automatically installed during container setup
 - Version check: `databricks -v`
 - Configuration managed through bundle files
@@ -66,16 +76,19 @@ The project includes Databricks workspace configuration via `databricks.yml`:
 ## Custom Agents
 
 Available agents in `.claude/agents/examples/`:
+
 - **code-reviewer**: Expert code review with security, performance, and maintainability analysis
 - Enhanced with data engineering Center of Excellence (CoE) practices
 
 ## MCP Integration
 
 ### Adding MCP Servers
+
 - Local: `claude mcp add <mcp_name> -- <npx or python> <mcp_package>`
 - Remote: `claude mcp add --transport <protocol> <mcp_name> <mcp_server_address>`
 
 ### Managing MCPs
+
 - Check status: `/mcp` command in Claude Code
 - Remove: `claude mcp remove <mcp_name>`
 - For firewall issues, whitelist domains in `.devcontainer/init-firewall.sh` line 74
@@ -83,6 +96,7 @@ Available agents in `.claude/agents/examples/`:
 ## Custom Commands
 
 Create custom slash commands in `.claude/commands/`:
+
 - File names become command names
 - Use `$ARGUMENTS` for parameters
 - Example: `/code_review feat/branch main` compares branches
@@ -90,18 +104,21 @@ Create custom slash commands in `.claude/commands/`:
 ## Development Workflow
 
 ### Starting Claude Code
+
 ```bash
 ccr code  # Standard mode
 ccr code --dangerously-skip-permissions  # Skip permission prompts
 ```
 
 ### Common Development Commands
+
 - **Databricks CLI**: `databricks -v` to check version, configured in dev container
 - **Git Configuration**: Pre-configured with bot user for commits
 - **Python Environment**: UV package manager installed for Python dependencies
 - **Container Management**: Persistent volumes for bash history and Claude config
 
 ### Key Commands
+
 - `/permissions` - Manage tool permissions
 - `/mcp` - Check MCP server status
 - Custom commands available based on `.claude/commands/` files
@@ -109,14 +126,16 @@ ccr code --dangerously-skip-permissions  # Skip permission prompts
 ## Limitations
 
 This dev container setup has the following limitations:
+
 - No Claude extended thinking support
-- No image analysis capabilities  
+- No image analysis capabilities
 - No web search functionality (router limitation)
 - Azure AI Foundry and Azure Databricks compatibility only
 
 ## Architecture Notes
 
 ### Container Configuration
+
 - **Base Image**: Node.js 20 with development tools
 - **Shell**: Zsh with powerline10k theme and fzf integration
 - **Tools**: git-delta, GitHub CLI, Databricks CLI, UV package manager
@@ -124,11 +143,13 @@ This dev container setup has the following limitations:
 - **Security**: Firewall configuration with iptables/ipset support
 
 ### VS Code Integration
+
 - **Extensions**: ESLint, Prettier, GitLens, Python, Jupyter, Terraform, Databricks
 - **Settings**: Format on save, ESLint auto-fix, zsh as default terminal
 - **Capabilities**: NET_ADMIN and NET_RAW for network management
 
 ### File Structure
+
 ```
 /workspace/                 # Project root
 ├── .devcontainer/         # Dev container configuration
@@ -145,6 +166,7 @@ This dev container setup has the following limitations:
 ## Repository Architecture
 
 ### Data Pipeline (Root Level)
+
 - **dbt_project.yml**: Main dbt project configuration for CAS data models
 - **dbt_profiles/profiles.yml**: Databricks connection profiles (dev/prod targets)
 - **resources/cas.job.yml**: Databricks job definition with daily scheduling
@@ -155,6 +177,7 @@ This dev container setup has the following limitations:
   - **tests/**: Custom dbt tests for data quality validation
 
 ### Infrastructure as Code
+
 - **iac/**: Terraform configuration for Azure resources
   - **providers.tf**: Azure and Databricks provider configuration
   - **variables.tf, locals.tf, data.tf, main.tf**: Infrastructure definitions
@@ -162,18 +185,21 @@ This dev container setup has the following limitations:
   - Creates: Azure Data Lake Gen2 storage, Databricks catalogs/schemas, external volumes
 
 ### Data Engineering Standards
+
 - **configs/coe/**: Center of Excellence configuration files
   - **mandatory-standards.yml**: Non-negotiable naming and data type rules
   - **advisory-guidelines.yml**: Best practice recommendations for dbt and performance
   - **project-specific.yml**: CAS-specific rules (NZ coordinates, crash severity codes, etc.)
 
 ### Development Environment
+
 - **databricks.yml**: Workspace bundle configuration for dev/prod deployment
 - **.devcontainer/**: Container setup with Databricks CLI, Python, and data tools
 
 ## Development commands
 
 ### CAS Data Pipeline (dbt)
+
 - **Setup** (from project root):
   ```bash
   python3 -m venv .venv
@@ -201,6 +227,7 @@ This dev container setup has the following limitations:
 - **Catalogs**: dev_bronze (development), transport_cas schema for all CAS tables
 
 ### Infrastructure (Terraform)
+
 - **Setup and Planning**:
   ```bash
   cd iac
@@ -216,15 +243,18 @@ This dev container setup has the following limitations:
 ## Data Engineering Standards
 
 ### Center of Excellence (CoE) Configuration
+
 The project implements data engineering best practices through YAML configuration files:
 
 - **Mandatory Standards** (`configs/coe/mandatory-standards.yml`):
+
   - Table naming: singular nouns, snake_case, no abbreviations
   - Datetime fields: UTC timezone required for all metadata columns
   - Primary keys: string-based IDs preferred over integers
   - Documentation: required descriptions for tables and business logic columns
 
 - **Advisory Guidelines** (`configs/coe/advisory-guidelines.yml`):
+
   - dbt patterns: layer separation (bronze/silver/gold), 80% documentation coverage
   - Performance: partition tables >10GB, Z-ORDER optimization for filtered columns
   - Testing: primary key tests, referential integrity, business rule validation
@@ -236,6 +266,7 @@ The project implements data engineering best practices through YAML configuratio
   - Data validation: coordinate bounds, casualty count consistency, speed limit values
 
 ### Usage in Development
+
 - Reference CoE configs when creating new models or reviewing code
 - Use configurations to validate naming conventions and data types
 - Apply CAS-specific business rules for crash data validation

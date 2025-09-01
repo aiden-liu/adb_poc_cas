@@ -70,8 +70,8 @@ if [ -n "${CLAUDE_ROUTER_GPT_API_BASE_URL:-}" ]; then
     router_gpt_domain=$(echo "${CLAUDE_ROUTER_GPT_API_BASE_URL}" | sed -E 's#^[a-zA-Z]+://##; s#/.*##')
 fi
 echo "Router domain parsed: $router_gpt_domain"
-if [ -n "${CLAUDE_ROUTER_ADB_SONNECT_API_BASE_URL:-}" ]; then
-    router_adb_domain=$(echo "${CLAUDE_ROUTER_ADB_SONNECT_API_BASE_URL}" | sed -E 's#^[a-zA-Z]+://##; s#/.*##')
+if [ -n "${CLAUDE_ROUTER_ADB_SONNET_API_BASE_URL:-}" ]; then
+    router_adb_domain=$(echo "${CLAUDE_ROUTER_ADB_SONNET_API_BASE_URL}" | sed -E 's#^[a-zA-Z]+://##; s#/.*##')
 fi
 echo "Router domain parsed: $router_adb_domain"
 

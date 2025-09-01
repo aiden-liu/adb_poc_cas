@@ -246,11 +246,11 @@ Onboarding
 - Set local env vars before opening the IDE (VS Code):
   - CLAUDE_ROUTER_GPT_API_BASE_URL
   - CLAUDE_ROUTER_GPT_API_KEY
-  - CLAUDE_ROUTER_ADB_SONNECT_API_BASE_URL
-  - CLAUDE_ROUTER_ADB_SONNECT_API_KEY
+  - CLAUDE_ROUTER_ADB_SONNET_API_BASE_URL
+  - CLAUDE_ROUTER_ADB_SONNET_API_KEY
   - From desktop:
   ```bash
-  export CLAUDE_ROUTER_GPT_API_BASE_URL=https://xxxxxx.openai.azure.com/openai/deployments/gpt-5/chat/completions?api-version=2024-12-01-preview && export CLAUDE_ROUTER_GPT_API_KEY=xxxxx && export CLAUDE_ROUTER_ADB_SONNECT_API_BASE_URL=https://xxxxxx.azuredatabricks.net/serving-endpoints/databricks-claude-sonnet-4/invocations && export CLAUDE_ROUTER_ADB_SONNECT_API_KEY=xxxxx && code <current_project_folder>
+  export CLAUDE_ROUTER_GPT_API_BASE_URL=https://xxxxxx.openai.azure.com/openai/deployments/gpt-5/chat/completions?api-version=2024-12-01-preview && export CLAUDE_ROUTER_GPT_API_KEY=xxxxx && export CLAUDE_ROUTER_ADB_SONNET_API_BASE_URL=https://xxxxxx.azuredatabricks.net/serving-endpoints/databricks-claude-sonnet-4/invocations && export CLAUDE_ROUTER_ADB_SONNET_API_KEY=xxxxx && code <current_project_folder>
   ```
 - Rebuild/reopen the Dev Container. The setup will generate ~/.claude-code-router/config.json and whitelist the domain derived from CLAUDE_ROUTER_GPT_API_BASE_URL.
 
@@ -265,7 +265,7 @@ Notes
 
 Limitations
 
-- This Dev Container config with Claude Code Router is for Azure AI Foundry and Azure Databricks Sonnect model compatibility only.
+- This Dev Container config with Claude Code Router is for Azure AI Foundry and Azure Databricks SONNET model compatibility only.
 - This setup does not support Claude extended thinking.
 - This setup does not support analysing images.
 - This setup does not support web search.

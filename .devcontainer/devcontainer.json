@@ -68,8 +68,8 @@
     "CLAUDE_ROUTER_GPT_API_BASE_URL": "${localEnv:CLAUDE_ROUTER_API_BASE_URL}",
     "CLAUDE_ROUTER_GPT_API_KEY": "${localEnv:CLAUDE_ROUTER_API_KEY}",
     "DISABLE_PROMPT_CACHING": "1",
-    "CLAUDE_ROUTER_ADB_SONNECT_API_BASE_URL": "${localEnv:CLAUDE_ROUTER_ADB_SONNECT_API_BASE_URL}",
-    "CLAUDE_ROUTER_ADB_SONNECT_API_KEY": "${localEnv:CLAUDE_ROUTER_ADB_SONNECT_API_KEY}"
+    "CLAUDE_ROUTER_ADB_SONNET_API_BASE_URL": "${localEnv:CLAUDE_ROUTER_ADB_SONNET_API_BASE_URL}",
+    "CLAUDE_ROUTER_ADB_SONNET_API_KEY": "${localEnv:CLAUDE_ROUTER_ADB_SONNET_API_KEY}"
   },
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
   "workspaceFolder": "/workspace",

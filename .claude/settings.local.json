@@ -2,21 +2,22 @@
   "permissions": {
     "allow": [
       "Bash(git commit:*)",
-      "WebSearch",
-      "mcp__github__search_repositories",
       "Bash(git add -A)",
       "Bash(gh repo create claude_code_project_template --public --source=. --remote=origin --push)",
       "Bash(source:*)",
       "Bash(uv pip install:*)",
       "Bash(dbt:*)",
+      "Bash(mkdir:*)",
+      "Bash(databricks workspace import:*)",
+      "Bash(databricks workspace list:*)",
+      "WebSearch",
       "WebFetch(domain:docs.anthropic.com)",
-      "Bash(mkdir:*)"
+      "mcp__github__search_repositories",
+      "mcp__ide__executeCode"
     ],
     "deny": [],
     "ask": []
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": [
-    "github"
-  ]
+  "enabledMcpjsonServers": ["github"]
 }
