@@ -162,6 +162,13 @@ Each chart is specific to a variable, and shows all data (without any filters ap
    $ . .venv/bin/activate
    ```
 
+Note:
+
+1. Infrastructure setup in this project is referencing an existing environment, including:
+   - Azure Databricks
+   - Azure Datalake Storage Gen2
+     These infrastructures are managed and maintained separately in [databricks-startup](https://github.com/aiden-liu/databricks-startup).
+
 ## Local development with dbt
 
 Use `dbt` to [run this project locally using a SQL warehouse](https://docs.databricks.com/partners/prep/dbt.html):
@@ -240,6 +247,8 @@ https://docs.databricks.com/dev-tools/vscode-ext.html. Third-party extensions
 related to dbt may further enhance your dbt development experience!
 
 # DevContainer & CLAUDE CODE Setup
+
+This repo is initiated from a template repository [claude_code_project_template](https://github.com/aiden-liu/claude_code_project_template), and below is the original README from the template repo.
 
 ## Onboarding
 
